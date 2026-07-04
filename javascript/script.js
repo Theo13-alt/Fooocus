@@ -314,6 +314,10 @@ function rebuildCards() {
                 if (e.target !== input) {
                     e.preventDefault();
                     input.click();
+
+                    if (typeof on_style_selection_blur === "function") {
+                        setTimeout(on_style_selection_blur, 50);
+                    }
                 }
             });
         }
