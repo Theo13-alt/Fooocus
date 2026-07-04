@@ -4,7 +4,7 @@ function gradioApp() {
     const elem = elems.length == 0 ? document : elems[0];
 
     if (elem !== document) {
-        elem.getElementById = function(id) {
+        elem.getElementById = function (id) {
             return document.getElementById(id);
         };
     }
@@ -96,15 +96,15 @@ function executeCallbacks(queue, arg) {
  */
 function scheduleAfterUiUpdateCallbacks() {
     clearTimeout(uiAfterUpdateTimeout);
-    uiAfterUpdateTimeout = setTimeout(function() {
+    uiAfterUpdateTimeout = setTimeout(function () {
         executeCallbacks(uiAfterUpdateCallbacks);
     }, 200);
 }
 
 var executedOnLoaded = false;
 
-document.addEventListener("DOMContentLoaded", function() {
-    var mutationObserver = new MutationObserver(function(m) {
+document.addEventListener("DOMContentLoaded", function () {
+    var mutationObserver = new MutationObserver(function (m) {
         if (!executedOnLoaded && gradioApp().querySelector('#generate_button')) {
             executedOnLoaded = true;
             executeCallbacks(uiLoadedCallbacks);
@@ -118,19 +118,22 @@ document.addEventListener("DOMContentLoaded", function() {
             executeCallbacks(uiTabChangeCallbacks);
         }
     });
-    mutationObserver.observe(gradioApp(), {childList: true, subtree: true});
-    initStylePreviewOverlay();
+    mutationObserver.observe(gradioApp(), { childList: true, subtree: true });
+
+    // Disabled: preview cards make the legacy hover overlay unnecessary.
+    // initStylePreviewOverlay();
+
 });
 
-var onAppend = function(elem, f) {
-    var observer = new MutationObserver(function(mutations) {
-        mutations.forEach(function(m) {
+var onAppend = function (elem, f) {
+    var observer = new MutationObserver(function (mutations) {
+        mutations.forEach(function (m) {
             if (m.addedNodes.length) {
                 f(m.addedNodes);
             }
         });
     });
-    observer.observe(elem, {childList: true});
+    observer.observe(elem, { childList: true });
 }
 
 function addObserverIfDesiredNodeAvailable(querySelector, callback) {
@@ -146,27 +149,27 @@ function addObserverIfDesiredNodeAvailable(querySelector, callback) {
 /**
  * Show reset button on toast "Connection errored out."
  */
-addObserverIfDesiredNodeAvailable(".toast-wrap", function(added) {
-    added.forEach(function(element) {
-         if (element.innerText.includes("Connection errored out.")) {
-             window.setTimeout(function() {
+addObserverIfDesiredNodeAvailable(".toast-wrap", function (added) {
+    added.forEach(function (element) {
+        if (element.innerText.includes("Connection errored out.")) {
+            window.setTimeout(function () {
                 document.getElementById("reset_button").classList.remove("hidden");
                 document.getElementById("generate_button").classList.add("hidden");
                 document.getElementById("skip_button").classList.add("hidden");
                 document.getElementById("stop_button").classList.add("hidden");
             });
-         }
+        }
     });
 });
 
 /**
  * Add a ctrl+enter as a shortcut to start a generation
  */
-document.addEventListener('keydown', function(e) {
+document.addEventListener('keydown', function (e) {
     const isModifierKey = (e.metaKey || e.ctrlKey || e.altKey);
     const isEnterKey = (e.key == "Enter" || e.keyCode == 13);
 
-    if(isModifierKey && isEnterKey) {
+    if (isModifierKey && isEnterKey) {
         const generateButton = gradioApp().querySelector('button:not(.hidden)[id=generate_button]');
         if (generateButton) {
             generateButton.click();
@@ -175,7 +178,7 @@ document.addEventListener('keydown', function(e) {
         }
 
         const stopButton = gradioApp().querySelector('button:not(.hidden)[id=stop_button]')
-        if(stopButton) {
+        if (stopButton) {
             stopButton.click();
             e.preventDefault();
             return;
@@ -258,8 +261,8 @@ function set_theme(theme) {
 }
 
 function htmlDecode(input) {
-  var doc = new DOMParser().parseFromString(input, "text/html");
-  return doc.documentElement.textContent;
+    var doc = new DOMParser().parseFromString(input, "text/html");
+    return doc.documentElement.textContent;
 }
 
 //* new function to initialize the style gallery cards with preview images
@@ -291,48 +294,48 @@ function initStyleGalleryCards() {
         setTimeout(on_style_selection_blur, 700);
     }
 
-function rebuildCards() {
-    const labels = styleBox.querySelectorAll("label");
+    function rebuildCards() {
+        const labels = styleBox.querySelectorAll("label");
 
-    labels.forEach(label => {
-        const name = getStyleName(label);
-        if (!name) return;
+        labels.forEach(label => {
+            const name = getStyleName(label);
+            if (!name) return;
 
-        let img = label.querySelector(".style-card-preview");
+            let img = label.querySelector(".style-card-preview");
 
-        if (!img) {
-            img = document.createElement("div");
-            img.className = "style-card-preview";
-            label.insertBefore(img, label.firstChild);
-            label.classList.add("style-card-label");
-        }
+            if (!img) {
+                img = document.createElement("div");
+                img.className = "style-card-preview";
+                label.insertBefore(img, label.firstChild);
+                label.classList.add("style-card-label");
+            }
 
-        img.dataset.styleName = name;
-        img.style.backgroundImage = `url("${getPreviewPath(name)}")`;
+            img.dataset.styleName = name;
+            img.style.backgroundImage = `url("${getPreviewPath(name)}")`;
 
-        const input = label.querySelector('input[type="checkbox"]');
+            const input = label.querySelector('input[type="checkbox"]');
 
-        if (input && input.dataset.galleryChangeReady !== "1") {
-            input.dataset.galleryChangeReady = "1";
-            input.addEventListener("change", notifyStyleSelectionChanged);
-        }
+            if (input && input.dataset.galleryChangeReady !== "1") {
+                input.dataset.galleryChangeReady = "1";
+                input.addEventListener("change", notifyStyleSelectionChanged);
+            }
 
-        if (label.dataset.galleryClickReady !== "1") {
-            label.dataset.galleryClickReady = "1";
+            if (label.dataset.galleryClickReady !== "1") {
+                label.dataset.galleryClickReady = "1";
 
-            label.addEventListener("click", function(e) {
-                const input = label.querySelector('input[type="checkbox"]');
-                if (!input) return;
+                label.addEventListener("click", function (e) {
+                    const input = label.querySelector('input[type="checkbox"]');
+                    if (!input) return;
 
-                if (e.target !== input) {
-                    e.preventDefault();
-                    input.click();
-                    notifyStyleSelectionChanged();
-                }
-            });
-        }
-    });
-}
+                    if (e.target !== input) {
+                        e.preventDefault();
+                        input.click();
+                        notifyStyleSelectionChanged();
+                    }
+                });
+            }
+        });
+    }
 
     rebuildCards();
 
