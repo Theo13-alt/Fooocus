@@ -315,6 +315,10 @@ function rebuildCards() {
                     e.preventDefault();
                     input.click();
 
+                    if (document.activeElement && typeof document.activeElement.blur === "function") {
+                        document.activeElement.blur();
+                    }
+
                     if (typeof on_style_selection_blur === "function") {
                         setTimeout(on_style_selection_blur, 50);
                     }
