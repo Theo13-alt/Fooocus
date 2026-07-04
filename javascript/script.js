@@ -285,6 +285,12 @@ function initStyleGalleryCards() {
             .replaceAll("\\", "\\\\");
     }
 
+    function notifyStyleSelectionChanged() {
+        if (typeof on_style_selection_blur !== "function") return;
+        setTimeout(on_style_selection_blur, 220);
+        setTimeout(on_style_selection_blur, 700);
+    }
+
 function rebuildCards() {
     const labels = styleBox.querySelectorAll("label");
 
@@ -304,6 +310,13 @@ function rebuildCards() {
         img.dataset.styleName = name;
         img.style.backgroundImage = `url("${getPreviewPath(name)}")`;
 
+        const input = label.querySelector('input[type="checkbox"]');
+
+        if (input && input.dataset.galleryChangeReady !== "1") {
+            input.dataset.galleryChangeReady = "1";
+            input.addEventListener("change", notifyStyleSelectionChanged);
+        }
+
         if (label.dataset.galleryClickReady !== "1") {
             label.dataset.galleryClickReady = "1";
 
@@ -314,14 +327,7 @@ function rebuildCards() {
                 if (e.target !== input) {
                     e.preventDefault();
                     input.click();
-
-                    if (document.activeElement && typeof document.activeElement.blur === "function") {
-                        document.activeElement.blur();
-                    }
-
-                    if (typeof on_style_selection_blur === "function") {
-                        setTimeout(on_style_selection_blur, 50);
-                    }
+                    notifyStyleSelectionChanged();
                 }
             });
         }
