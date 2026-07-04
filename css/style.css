@@ -417,7 +417,7 @@ div:has(> #positive_prompt) {
   background: none;
 }
 
-/* Morgan style gallery cards */
+/* Style gallery cards */
 
 .contain .tabs .tabitem.style_selections_tab .style_selections .wrap[data-testid="checkbox-group"] {
   display: grid !important;
@@ -465,7 +465,7 @@ div:has(> #positive_prompt) {
   line-height: 1.2;
 }
 
-/* Выделенная карточка */
+/* Selected style card */
 
 .style-card-label:has(input:checked) {
     border: 2px solid #f0c674 !important;

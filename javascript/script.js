@@ -265,7 +265,7 @@ function htmlDecode(input) {
     return doc.documentElement.textContent;
 }
 
-//* new function to initialize the style gallery cards with preview images
+// Initialize style gallery cards with preview images.
 function initStyleGalleryCards() {
     const app = gradioApp();
     const styleBox = app.querySelector('.style_selections');
