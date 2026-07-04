@@ -416,3 +416,69 @@ div:has(> #positive_prompt) {
 #inpaint_brush_color input[type=color]{
   background: none;
 }
+
+/* Morgan style gallery cards */
+
+.contain .tabs .tabitem.style_selections_tab .style_selections .wrap[data-testid="checkbox-group"] {
+  display: grid !important;
+  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  gap: 8px !important;
+  position: absolute;
+  overflow: auto;
+  padding-right: 2px;
+  max-height: 100%;
+}
+
+.contain .tabs .tabitem.style_selections_tab .style_selections .wrap[data-testid="checkbox-group"] label.style-card-label {
+  flex: none !important;
+  width: auto !important;
+  max-width: none !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: stretch !important;
+  gap: 6px !important;
+  padding: 8px !important;
+  min-height: 150px !important;
+  position: relative !important;
+}
+
+.style-card-preview {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  border-radius: 6px;
+  background-size: cover;
+  background-position: center;
+  background-color: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+}
+
+.contain .tabs .tabitem.style_selections_tab .style_selections label.style-card-label input {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  z-index: 2;
+}
+
+.contain .tabs .tabitem.style_selections_tab .style_selections label.style-card-label span {
+  padding-left: 0 !important;
+  font-size: 12px;
+  line-height: 1.2;
+}
+
+/* Выделенная карточка */
+
+.style-card-label:has(input:checked) {
+    border: 2px solid #f0c674 !important;
+    box-shadow: 0 0 10px rgba(240,198,116,.45);
+    border-radius: 8px;
+    transition: .15s;
+}
+
+.style-card-label {
+    border: 2px solid transparent;
+    transition: .15s;
+}
+
+.style-card-label:hover {
+    transform: translateY(-2px);
+}

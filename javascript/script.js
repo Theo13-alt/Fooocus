@@ -261,3 +261,76 @@ function htmlDecode(input) {
   var doc = new DOMParser().parseFromString(input, "text/html");
   return doc.documentElement.textContent;
 }
+
+//* new function to initialize the style gallery cards with preview images
+function initStyleGalleryCards() {
+    const app = gradioApp();
+    const styleBox = app.querySelector('.style_selections');
+    if (!styleBox) return;
+
+    const meta = document.querySelector("meta[name='samples-path']");
+    if (!meta) return;
+
+    const samplesPath = meta.getAttribute("content");
+
+    function getStyleName(label) {
+        const span = label.querySelector("span");
+        if (!span) return "";
+        return span.getAttribute("data-original-text") || span.textContent.trim();
+    }
+
+    function getPreviewPath(name) {
+        return samplesPath
+            .replace("fooocus_v2", name.toLowerCase().replaceAll(" ", "_"))
+            .replaceAll("\\", "\\\\");
+    }
+
+function rebuildCards() {
+    const labels = styleBox.querySelectorAll("label");
+
+    labels.forEach(label => {
+        const name = getStyleName(label);
+        if (!name) return;
+
+        let img = label.querySelector(".style-card-preview");
+
+        if (!img) {
+            img = document.createElement("div");
+            img.className = "style-card-preview";
+            label.insertBefore(img, label.firstChild);
+            label.classList.add("style-card-label");
+        }
+
+        img.dataset.styleName = name;
+        img.style.backgroundImage = `url("${getPreviewPath(name)}")`;
+
+        if (label.dataset.galleryClickReady !== "1") {
+            label.dataset.galleryClickReady = "1";
+
+            label.addEventListener("click", function(e) {
+                const input = label.querySelector('input[type="checkbox"]');
+                if (!input) return;
+
+                if (e.target !== input) {
+                    e.preventDefault();
+                    input.click();
+                }
+            });
+        }
+    });
+}
+
+    rebuildCards();
+
+    if (styleBox.dataset.galleryObserverReady === '1') return;
+    styleBox.dataset.galleryObserverReady = '1';
+
+    const observer = new MutationObserver(() => {
+        rebuildCards();
+    });
+
+    observer.observe(styleBox, { childList: true, subtree: true });
+}
+
+onUiLoaded(initStyleGalleryCards);
+onAfterUiUpdate(initStyleGalleryCards);
